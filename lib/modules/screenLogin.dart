@@ -45,88 +45,98 @@ class _ScreenLoginState extends State<ScreenLogin> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-          backgroundColor: Colors.white,
-          body: Column(mainAxisSize: MainAxisSize.max, children: [
-            Image.asset(
-              'assets/images/login_vector.png',
-              height: context.height(350),
-              fit: BoxFit.fill,
+        resizeToAvoidBottomInset: true,
+        backgroundColor: Colors.white,
+        body: Container(
+          alignment: Alignment.topCenter,
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              fit: BoxFit.fitWidth,
+              alignment: Alignment.topCenter,
+              image: AssetImage(
+                'assets/images/login_vector.png',
+              ),
             ),
-            Container(
-              padding: EdgeInsets.symmetric(
-                  horizontal: context.width(20), vertical: context.height(32)),
-              decoration: BoxDecoration(
-                  color: AppColors.neutralGrey200,
-                  borderRadius:
-                      const BorderRadius.vertical(top: Radius.circular(20))),
-              child: Column(mainAxisSize: MainAxisSize.max, children: [
-                Text(
-                  'Attendance App',
-                  style: CustomFontStyle.h3Semi(
-                    AppColors.neutralGrey700,
+          ),
+        ),
+        bottomSheet: Container(
+          padding: EdgeInsets.symmetric(
+              horizontal: context.width(20), vertical: context.height(32)),
+          decoration: BoxDecoration(
+              color: AppColors.neutralGrey200,
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(20))),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Attendance App',
+                style: CustomFontStyle.h3Semi(
+                  AppColors.neutralGrey700,
+                ),
+                softWrap: true,
+              ),
+              SizedBox(
+                height: context.height(20),
+              ),
+              CustomTextfields(
+                controller: _controllerEmail,
+                labelText: 'Email',
+                hintText: 'Enter your email',
+                prefixIcon: BootstrapIcons.person_fill,
+                suffixIcon: BootstrapIcons.x,
+                onTapSuffixIcon: () => _controllerEmail.clear(),
+                enabled: _enableEmailField,
+                errorText: _errorEmail,
+              ),
+              const SizedBox(height: 8),
+              CustomTextfields(
+                controller: _controllerPassword,
+                labelText: 'Password',
+                hintText: 'Enter password',
+                prefixIcon: BootstrapIcons.lock_fill,
+                suffixIcon: !_obscureTextPassword
+                    ? BootstrapIcons.eye_slash_fill
+                    : BootstrapIcons.eye_fill,
+                obscureText: _obscureTextPassword,
+                onTapSuffixIcon: () {
+                  setState(() {
+                    _obscureTextPassword
+                        ? _obscureTextPassword = false
+                        : _obscureTextPassword = true;
+                  });
+                },
+                enabled: _enablePasswordField,
+                errorText: _errorPass,
+              ),
+              SizedBox(
+                height: context.height(24),
+              ),
+              Row(
+                children: [
+                  CustomButtons(
+                    text: 'Login',
+                    onTap: _onTapLogin,
+                    buttonWidth: ButtonWidth.max,
+                    buttonSize: ButtonSize.large,
+                    isLoading: _isLoading,
                   ),
-                  softWrap: true,
-                ),
-                SizedBox(
-                  height: context.height(20),
-                ),
-                CustomTextfields(
-                  controller: _controllerEmail,
-                  labelText: 'Email',
-                  hintText: 'Enter your email',
-                  prefixIcon: BootstrapIcons.person_fill,
-                  suffixIcon: BootstrapIcons.x,
-                  onTapSuffixIcon: () => _controllerEmail.clear(),
-                  enabled: _enableEmailField,
-                  errorText: _errorEmail,
-                ),
-                const SizedBox(height: 8),
-                CustomTextfields(
-                  controller: _controllerPassword,
-                  labelText: 'Password',
-                  hintText: 'Enter password',
-                  prefixIcon: BootstrapIcons.lock_fill,
-                  suffixIcon: !_obscureTextPassword
-                      ? BootstrapIcons.eye_slash_fill
-                      : BootstrapIcons.eye_fill,
-                  obscureText: _obscureTextPassword,
-                  onTapSuffixIcon: () {
-                    setState(() {
-                      _obscureTextPassword
-                          ? _obscureTextPassword = false
-                          : _obscureTextPassword = true;
-                    });
-                  },
-                  enabled: _enablePasswordField,
-                  errorText: _errorPass,
-                ),
-                SizedBox(
-                  height: context.height(24),
-                ),
-                Row(
-                  children: [
-                    CustomButtons(
-                      text: 'Login',
-                      onTap: _onTapLogin,
-                      buttonWidth: ButtonWidth.max,
-                      buttonSize: ButtonSize.large,
-                      isLoading: _isLoading,
-                    ),
-                    const SizedBox(width: 12),
-                    CustomButtons(
-                      text: 'Register',
-                      onTap: () {
-                        Navigator.of(context)
-                            .pushReplacementNamed(ScreenRegister.route);
-                      },
-                      buttonVarient: ButtonVarient.outlined,
-                      buttonSize: ButtonSize.large,
-                    )
-                  ],
-                ),
-              ]),
-            )
-          ])),
+                  const SizedBox(width: 12),
+                  CustomButtons(
+                    text: 'Register',
+                    onTap: () {
+                      Navigator.of(context)
+                          .pushReplacementNamed(ScreenRegister.route);
+                    },
+                    buttonVarient: ButtonVarient.outlined,
+                    buttonSize: ButtonSize.large,
+                  )
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 

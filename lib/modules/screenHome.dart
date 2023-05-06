@@ -1,6 +1,7 @@
 import 'package:attendance_app_v2/helpers/colors.dart';
 import 'package:attendance_app_v2/helpers/fonts.dart';
 import 'package:attendance_app_v2/helpers/shared_prefs.dart';
+import 'package:attendance_app_v2/modules/screenClassrooms.dart';
 import 'package:attendance_app_v2/modules/screenLogin.dart';
 import 'package:attendance_app_v2/widgets/customClassroomCard.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -29,14 +30,8 @@ class _ScreenHomeState extends State<ScreenHome> {
             toolbarHeight: 82,
             backgroundColor: Colors.transparent,
             flexibleSpace: Container(
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: <Color>[
-                      Color.fromARGB(255, 52, 64, 84),
-                      Color(0xff475467)
-                    ]),
+              decoration: BoxDecoration(
+                gradient: AppColors.appBarGradient,
               ),
               child: Padding(
                 padding: const EdgeInsets.all(20),
@@ -92,8 +87,10 @@ class _ScreenHomeState extends State<ScreenHome> {
             padding: const EdgeInsets.all(16),
             child: Column(
               children: [
-                _widgetMenuButtons('Take',
-                    const AssetImage('assets/images/take_att.jpg'), () {}),
+                _widgetMenuButtons(
+                    'Take', const AssetImage('assets/images/take_att.jpg'), () {
+                  Navigator.of(context).pushNamed(ScreenClassrooms.route);
+                }),
                 const SizedBox(
                   height: 8,
                 ),

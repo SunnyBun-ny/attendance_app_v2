@@ -10,18 +10,22 @@ class CustomClassroomCard extends StatelessWidget {
   bool showButtons;
   VoidCallback? onTapSkip;
   VoidCallback? onTapTakeAttendance;
-  CustomClassroomCard(
-      {super.key,
-      required this.classroomName,
-      required this.subjectName,
-      required this.onTap,
-      this.showButtons = false,
-      this.onTapSkip,
-      this.onTapTakeAttendance});
+  double bottomMargin;
+  CustomClassroomCard({
+    super.key,
+    required this.classroomName,
+    required this.subjectName,
+    required this.onTap,
+    this.showButtons = false,
+    this.onTapSkip,
+    this.onTapTakeAttendance,
+    this.bottomMargin = 8,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      margin: EdgeInsets.only(bottom: bottomMargin),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
           color: AppColors.blue300,

@@ -18,4 +18,9 @@ class AppColors {
   static get buttonColorDisabled => const Color(0xffCCE0FF);
   static get blue200 => const Color(0xff99C2FF);
   static get blue300 => const Color(0xff7FB2FF);
+
+  static get appBarGradient => const LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: <Color>[Color.fromARGB(255, 52, 64, 84), Color(0xff475467)]);
 }
