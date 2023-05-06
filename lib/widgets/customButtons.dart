@@ -94,16 +94,29 @@ class _CustomButtonsState extends State<CustomButtons> {
                           : const SizedBox.shrink(),
                       Text(
                         widget.text,
-                        style: CustomFontStyle.paraMSemi(
-                          widget.buttonVarient == ButtonVarient.outlined &&
-                                  widget.enabled
-                              ? AppColors.buttonColor
-                              : widget.buttonVarient ==
-                                          ButtonVarient.outlined &&
-                                      !widget.enabled
-                                  ? AppColors.buttonColorDisabled
-                                  : Colors.white,
-                        ),
+                        style: widget.buttonSize == ButtonSize.small
+                            ? CustomFontStyle.paraSMedium(
+                                widget.buttonVarient ==
+                                            ButtonVarient.outlined &&
+                                        widget.enabled
+                                    ? AppColors.buttonColor
+                                    : widget.buttonVarient ==
+                                                ButtonVarient.outlined &&
+                                            !widget.enabled
+                                        ? AppColors.buttonColorDisabled
+                                        : Colors.white,
+                              )
+                            : CustomFontStyle.paraMSemi(
+                                widget.buttonVarient ==
+                                            ButtonVarient.outlined &&
+                                        widget.enabled
+                                    ? AppColors.buttonColor
+                                    : widget.buttonVarient ==
+                                                ButtonVarient.outlined &&
+                                            !widget.enabled
+                                        ? AppColors.buttonColorDisabled
+                                        : Colors.white,
+                              ),
                       ),
                       widget.suffixIcon != null
                           ? Row(
