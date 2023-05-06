@@ -1,6 +1,8 @@
-import 'package:attendance_app_v2/modules/login_and_register/screenLogin.dart';
-import 'package:attendance_app_v2/modules/login_and_register/screenRegister.dart';
+import 'package:attendance_app_v2/modules/screenHome.dart';
 import 'package:flutter/material.dart';
+import 'package:attendance_app_v2/helpers/colors.dart';
+import 'modules/screenLogin.dart';
+import 'modules/screenRegister.dart';
 
 void main() {
   runApp(const AttendanceAppV2());
@@ -18,12 +20,13 @@ class _AttendanceAppV2State extends State<AttendanceAppV2> {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        fontFamily: 'Inter',
-      ),
+          fontFamily: 'Inter',
+          scaffoldBackgroundColor: AppColors.neutralGrey100),
       initialRoute: ScreenLogin.route,
       routes: {
         ScreenLogin.route: (context) => ScreenLogin(),
-        ScreenRegister.route: (context) => ScreenRegister()
+        ScreenRegister.route: (context) => ScreenRegister(),
+        ScreenHome.route: (context) => ScreenHome(),
       },
     );
   }

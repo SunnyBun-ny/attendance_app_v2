@@ -1,35 +1,41 @@
-import 'package:attendance_app_v2/helpers/colors.dart';
-import 'package:attendance_app_v2/helpers/fonts.dart';
 import 'package:attendance_app_v2/helpers/screenDetails.dart';
-import 'package:attendance_app_v2/modules/login_and_register/screenRegister.dart';
-import 'package:attendance_app_v2/widgets/customButtons.dart';
-import 'package:attendance_app_v2/widgets/customTextFields.dart';
+
+import 'package:attendance_app_v2/modules/screenLogin.dart';
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:flutter/material.dart';
 
-class ScreenLogin extends StatefulWidget {
-  static String route = '/screen-login';
-  const ScreenLogin({super.key});
+import '../../helpers/colors.dart';
+import '../../helpers/fonts.dart';
+import '../../widgets/customButtons.dart';
+import '../../widgets/customTextFields.dart';
+
+class ScreenRegister extends StatefulWidget {
+  static String route = '/screen-register';
+  const ScreenRegister({super.key});
 
   @override
-  State<ScreenLogin> createState() => _ScreenLoginState();
+  State<ScreenRegister> createState() => _ScreenRegisterState();
 }
 
-class _ScreenLoginState extends State<ScreenLogin> {
+class _ScreenRegisterState extends State<ScreenRegister> {
   late TextEditingController _controllerEmail;
   late TextEditingController _controllerPassword;
+  late TextEditingController _controllerConfirmPassword;
   bool _obscureTextPassword = false;
+  bool _obscureTextConfirmPassword = false;
   @override
   void initState() {
     super.initState();
     _controllerEmail = TextEditingController();
     _controllerPassword = TextEditingController();
+    _controllerConfirmPassword = TextEditingController();
   }
 
   @override
   void dispose() {
     _controllerEmail.dispose();
     _controllerPassword.dispose();
+    _controllerConfirmPassword.dispose();
     super.dispose();
   }
 
@@ -41,8 +47,8 @@ class _ScreenLoginState extends State<ScreenLogin> {
         child: Column(children: [
           Image.asset(
             'assets/images/login_vector.png',
-            height: context.height(350),
-            fit: BoxFit.fitHeight,
+            height: context.height(270),
+            fit: BoxFit.fitWidth,
           ),
           Container(
             padding: EdgeInsets.symmetric(
@@ -88,6 +94,24 @@ class _ScreenLoginState extends State<ScreenLogin> {
                   });
                 },
               ),
+              const SizedBox(height: 8),
+              CustomTextfields(
+                controller: _controllerConfirmPassword,
+                labelText: 'Confirm Password',
+                hintText: 'Confirm password',
+                prefixIcon: BootstrapIcons.lock_fill,
+                suffixIcon: !_obscureTextConfirmPassword
+                    ? BootstrapIcons.eye_slash_fill
+                    : BootstrapIcons.eye_fill,
+                obscureText: _obscureTextConfirmPassword,
+                onTapSuffixIcon: () {
+                  setState(() {
+                    _obscureTextConfirmPassword
+                        ? _obscureTextConfirmPassword = false
+                        : _obscureTextConfirmPassword = true;
+                  });
+                },
+              ),
               SizedBox(
                 height: context.height(24),
               ),
@@ -95,19 +119,20 @@ class _ScreenLoginState extends State<ScreenLogin> {
                 children: [
                   CustomButtons(
                     text: 'Login',
-                    onTap: () {},
-                    buttonWidth: ButtonWidth.max,
+                    onTap: () {
+                      Navigator.of(context)
+                          .pushReplacementNamed(ScreenLogin.route);
+                    },
+                    buttonVarient: ButtonVarient.outlined,
+                    buttonWidth: ButtonWidth.min,
                     buttonSize: ButtonSize.large,
                   ),
                   const SizedBox(width: 12),
                   CustomButtons(
                     text: 'Register',
-                    onTap: () {
-                      Navigator.of(context)
-                          .pushReplacementNamed(ScreenRegister.route);
-                    },
-                    buttonVarient: ButtonVarient.outlined,
+                    onTap: () {},
                     buttonSize: ButtonSize.large,
+                    buttonWidth: ButtonWidth.max,
                   )
                 ],
               ),

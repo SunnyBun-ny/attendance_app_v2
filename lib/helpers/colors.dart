@@ -16,4 +16,6 @@ class AppColors {
 
   static get buttonColor => const Color(0xff1A75FF);
   static get buttonColorDisabled => const Color(0xffCCE0FF);
+  static get blue200 => const Color(0xff99C2FF);
+  static get blue300 => const Color(0xff7FB2FF);
 }
