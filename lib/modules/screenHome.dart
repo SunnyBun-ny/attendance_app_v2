@@ -1,7 +1,11 @@
 import 'package:attendance_app_v2/helpers/colors.dart';
 import 'package:attendance_app_v2/helpers/fonts.dart';
+import 'package:attendance_app_v2/helpers/shared_prefs.dart';
+import 'package:attendance_app_v2/modules/screenLogin.dart';
 import 'package:attendance_app_v2/widgets/customClassroomCard.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DataModel {
   static String name = 'Mangesh Pawar';
@@ -38,9 +42,28 @@ class _ScreenHomeState extends State<ScreenHome> {
                 padding: const EdgeInsets.all(20),
                 child: Row(
                   children: [
-                    const CircleAvatar(
-                      backgroundColor: Colors.amber,
-                      radius: 25,
+                    InkWell(
+                      onTap: () async {
+                        SharedPreferences prefs =
+                            await SharedPreferences.getInstance();
+                        try {
+                          FirebaseAuth.instance.signOut().whenComplete(() {
+                            prefs.setBool(SharedPrefs.isLoggedIn, false);
+                            Navigator.pushNamedAndRemoveUntil(
+                                context, ScreenLogin.route, (route) => false);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Logged out!')));
+                          });
+                        } catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text('Error! Try Again.')));
+                        }
+                      },
+                      child: const CircleAvatar(
+                        backgroundColor: Colors.amber,
+                        radius: 25,
+                      ),
                     ),
                     const SizedBox(
                       width: 8,

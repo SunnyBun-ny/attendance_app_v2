@@ -43,7 +43,6 @@ class _CustomButtonsState extends State<CustomButtons> {
       child: InkResponse(
         onTap: widget.onTap,
         borderRadius: BorderRadius.circular(10),
-        splashColor: Colors.amber,
         child: Container(
             padding: widget.buttonSize == ButtonSize.large
                 ? const EdgeInsets.symmetric(vertical: 12, horizontal: 24)
