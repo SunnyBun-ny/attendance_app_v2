@@ -1,7 +1,14 @@
 import 'package:attendance_app_v2/helpers/colors.dart';
 import 'package:attendance_app_v2/helpers/fonts.dart';
+import 'package:attendance_app_v2/helpers/shared_prefs.dart';
+import 'package:attendance_app_v2/modules/screenClassrooms.dart';
+import 'package:attendance_app_v2/modules/screenLogin.dart';
+import 'package:attendance_app_v2/modules/screenViewAttendance.dart';
 import 'package:attendance_app_v2/widgets/customClassroomCard.dart';
+import 'package:bootstrap_icons/bootstrap_icons.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DataModel {
   static String name = 'Mangesh Pawar';
@@ -25,21 +32,16 @@ class _ScreenHomeState extends State<ScreenHome> {
             toolbarHeight: 82,
             backgroundColor: Colors.transparent,
             flexibleSpace: Container(
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: <Color>[
-                      Color.fromARGB(255, 52, 64, 84),
-                      Color(0xff475467)
-                    ]),
+              decoration: BoxDecoration(
+                gradient: AppColors.appBarGradient,
               ),
               child: Padding(
                 padding: const EdgeInsets.all(20),
                 child: Row(
                   children: [
                     const CircleAvatar(
-                      backgroundColor: Colors.amber,
+                      backgroundImage:
+                          AssetImage('assets/images/profile_default.jpeg'),
                       radius: 25,
                     ),
                     const SizedBox(
@@ -48,13 +50,13 @@ class _ScreenHomeState extends State<ScreenHome> {
                     Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(DataModel.name,
+                          Text('Attendance App',
                               style:
                                   CustomFontStyle.subtitleBold(Colors.white)),
                           const SizedBox(
                             height: 4,
                           ),
-                          Text(DataModel.designation,
+                          Text('V2',
                               style: CustomFontStyle.paraSRegular(
                                   AppColors.neutralGrey400))
                         ]),
@@ -64,46 +66,72 @@ class _ScreenHomeState extends State<ScreenHome> {
             ),
             automaticallyImplyLeading: false,
           ),
+          floatingActionButton: FloatingActionButton(
+            backgroundColor: AppColors.alertRed,
+            onPressed: () async {
+              SharedPreferences prefs = await SharedPreferences.getInstance();
+              try {
+                FirebaseAuth.instance.signOut().whenComplete(() {
+                  prefs.setBool(SharedPrefs.isLoggedIn, false);
+                  Navigator.pushNamedAndRemoveUntil(
+                      context, ScreenLogin.route, (route) => false);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Logged out!')));
+                });
+              } catch (e) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Error! Try Again.')));
+              }
+            },
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            child:
+                Text('Logout', style: CustomFontStyle.captionM(Colors.white)),
+          ),
           body: SingleChildScrollView(
               child: Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
               children: [
-                _widgetMenuButtons('Take',
-                    const AssetImage('assets/images/take_att.jpg'), () {}),
+                _widgetMenuButtons(
+                    'Take', const AssetImage('assets/images/take_att.jpg'), () {
+                  Navigator.of(context).pushNamed(ScreenClassrooms.route);
+                }),
                 const SizedBox(
                   height: 8,
                 ),
-                _widgetMenuButtons('View',
-                    const AssetImage('assets/images/view_att.jpg'), () {}),
-                Padding(
-                  padding: const EdgeInsets.only(
-                    top: 16,
-                    bottom: 4,
-                    left: 4,
-                    right: 4,
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Text('Reminder',
-                          style: CustomFontStyle.captionR(
-                              AppColors.neutralGrey400)),
-                      Expanded(
-                        child: Divider(
-                          color: AppColors.neutralGrey300,
-                          thickness: 0.8,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                CustomClassroomCard(
-                  classroomName: 'FYBTech Div B',
-                  subjectName: 'NLP',
-                  onTap: () {},
-                  showButtons: true,
-                )
+                _widgetMenuButtons(
+                    'View', const AssetImage('assets/images/view_att.jpg'), () {
+                  Navigator.of(context).pushNamed(ScreenViewAttendance.route);
+                }),
+                // Padding(
+                //   padding: const EdgeInsets.only(
+                //     top: 16,
+                //     bottom: 4,
+                //     left: 4,
+                //     right: 4,
+                //   ),
+                //   child: Row(
+                //     mainAxisSize: MainAxisSize.max,
+                //     children: [
+                //       Text('Reminder',
+                //           style: CustomFontStyle.captionR(
+                //               AppColors.neutralGrey400)),
+                //       Expanded(
+                //         child: Divider(
+                //           color: AppColors.neutralGrey300,
+                //           thickness: 0.8,
+                //         ),
+                //       ),
+                //     ],
+                //   ),
+                // ),
+                // CustomClassroomCard(
+                //   classroomName: 'FYBTech Div B',
+                //   subjectName: 'NLP',
+                //   onTap: () {},
+                //   showButtons: true,
+                // )
               ],
             ),
           ))),

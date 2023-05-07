@@ -12,6 +12,7 @@ class CustomTextfields extends StatefulWidget {
   IconData? suffixIcon;
   VoidCallback? onTapSuffixIcon;
   bool obscureText;
+  bool enabled;
 
   CustomTextfields({
     super.key,
@@ -23,6 +24,7 @@ class CustomTextfields extends StatefulWidget {
     this.suffixIcon,
     this.onTapSuffixIcon,
     this.obscureText = false,
+    this.enabled = true,
   });
 
   @override
@@ -58,6 +60,7 @@ class _CustomTextfieldsState extends State<CustomTextfields> {
               style: CustomFontStyle.paraMRegular(AppColors.neutralGrey900),
               obscureText: widget.obscureText,
               decoration: InputDecoration(
+                  enabled: widget.enabled,
                   contentPadding: const EdgeInsets.only(
                       left: 12, right: 8, top: 8, bottom: 8),
                   hintText: widget.hintText,

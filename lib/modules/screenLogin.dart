@@ -1,13 +1,16 @@
 import 'package:attendance_app_v2/helpers/colors.dart';
 import 'package:attendance_app_v2/helpers/fonts.dart';
 import 'package:attendance_app_v2/helpers/screenDetails.dart';
+import 'package:attendance_app_v2/helpers/shared_prefs.dart';
 import 'package:attendance_app_v2/modules/screenHome.dart';
 import 'package:attendance_app_v2/modules/screenRegister.dart';
 
 import 'package:attendance_app_v2/widgets/customButtons.dart';
 import 'package:attendance_app_v2/widgets/customTextFields.dart';
 import 'package:bootstrap_icons/bootstrap_icons.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ScreenLogin extends StatefulWidget {
   static String route = '/screen-login';
@@ -21,6 +24,11 @@ class _ScreenLoginState extends State<ScreenLogin> {
   late TextEditingController _controllerEmail;
   late TextEditingController _controllerPassword;
   bool _obscureTextPassword = false;
+  bool _enableEmailField = true;
+  bool _enablePasswordField = true;
+  bool _isLoading = false;
+  String? _errorEmail;
+  String? _errorPass;
   @override
   void initState() {
     super.initState();
@@ -39,21 +47,30 @@ class _ScreenLoginState extends State<ScreenLogin> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-          body: SingleChildScrollView(
-        child: Column(children: [
-          Image.asset(
-            'assets/images/login_vector.png',
-            height: context.height(350),
-            fit: BoxFit.fitHeight,
+        resizeToAvoidBottomInset: true,
+        backgroundColor: Colors.white,
+        body: Container(
+          alignment: Alignment.topCenter,
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              fit: BoxFit.fitWidth,
+              alignment: Alignment.topCenter,
+              image: AssetImage(
+                'assets/images/login_vector.png',
+              ),
+            ),
           ),
-          Container(
-            padding: EdgeInsets.symmetric(
-                horizontal: context.width(20), vertical: context.height(32)),
-            decoration: BoxDecoration(
-                color: AppColors.neutralGrey200,
-                borderRadius:
-                    const BorderRadius.vertical(top: Radius.circular(20))),
-            child: Column(children: [
+        ),
+        bottomSheet: Container(
+          padding: EdgeInsets.symmetric(
+              horizontal: context.width(20), vertical: context.height(32)),
+          decoration: BoxDecoration(
+              color: AppColors.neutralGrey200,
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(20))),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
               Text(
                 'Attendance App',
                 style: CustomFontStyle.h3Semi(
@@ -71,6 +88,8 @@ class _ScreenLoginState extends State<ScreenLogin> {
                 prefixIcon: BootstrapIcons.person_fill,
                 suffixIcon: BootstrapIcons.x,
                 onTapSuffixIcon: () => _controllerEmail.clear(),
+                enabled: _enableEmailField,
+                errorText: _errorEmail,
               ),
               const SizedBox(height: 8),
               CustomTextfields(
@@ -89,6 +108,8 @@ class _ScreenLoginState extends State<ScreenLogin> {
                         : _obscureTextPassword = true;
                   });
                 },
+                enabled: _enablePasswordField,
+                errorText: _errorPass,
               ),
               SizedBox(
                 height: context.height(24),
@@ -97,11 +118,10 @@ class _ScreenLoginState extends State<ScreenLogin> {
                 children: [
                   CustomButtons(
                     text: 'Login',
-                    onTap: () {
-                      Navigator.of(context).pushNamed(ScreenHome.route);
-                    },
+                    onTap: _onTapLogin,
                     buttonWidth: ButtonWidth.max,
                     buttonSize: ButtonSize.large,
+                    isLoading: _isLoading,
                   ),
                   const SizedBox(width: 12),
                   CustomButtons(
@@ -115,10 +135,56 @@ class _ScreenLoginState extends State<ScreenLogin> {
                   )
                 ],
               ),
-            ]),
-          )
-        ]),
-      )),
+            ],
+          ),
+        ),
+      ),
     );
+  }
+
+  void _onTapLogin() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _enableEmailField = false;
+      _enablePasswordField = false;
+      _isLoading = true;
+      _errorEmail = null;
+      _errorPass = null;
+    });
+    try {
+      await FirebaseAuth.instance
+          .signInWithEmailAndPassword(
+        email: _controllerEmail.text.trim(),
+        password: _controllerPassword.text.trim(),
+      )
+          .then((value) {
+        prefs.setString(SharedPrefs.uid, value.user!.uid);
+      });
+
+      Navigator.of(context).pushReplacementNamed(ScreenHome.route);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('No user found for that email.')));
+        print('No user found for that email.');
+      } else if (e.code == 'invalid-email') {
+        setState(() {
+          _errorEmail = 'Please eneter correct email id';
+        });
+      } else if (e.code == 'wrong-password') {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('Wrong password provided for that user.')));
+        print('Wrong password provided for that user.');
+      } else {
+        print(e.code);
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('Network Error')));
+      }
+      setState(() {
+        _enableEmailField = true;
+        _enablePasswordField = true;
+        _isLoading = false;
+      });
+    }
   }
 }
