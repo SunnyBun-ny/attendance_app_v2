@@ -18,18 +18,19 @@ class CustomButtons extends StatefulWidget {
   IconData? suffixIcon;
   ButtonWidth buttonWidth;
   bool isLoading;
-  CustomButtons({
-    super.key,
-    required this.onTap,
-    required this.text,
-    this.buttonSize = ButtonSize.medium,
-    this.buttonVarient = ButtonVarient.filled,
-    this.enabled = true,
-    this.prefixIcon,
-    this.suffixIcon,
-    this.buttonWidth = ButtonWidth.min,
-    this.isLoading = false,
-  });
+  Color? color;
+  CustomButtons(
+      {super.key,
+      required this.onTap,
+      required this.text,
+      this.buttonSize = ButtonSize.medium,
+      this.buttonVarient = ButtonVarient.filled,
+      this.enabled = true,
+      this.prefixIcon,
+      this.suffixIcon,
+      this.buttonWidth = ButtonWidth.min,
+      this.isLoading = false,
+      this.color});
 
   @override
   State<CustomButtons> createState() => _CustomButtonsState();
@@ -50,17 +51,19 @@ class _CustomButtonsState extends State<CustomButtons> {
                     ? const EdgeInsets.symmetric(horizontal: 20, vertical: 12)
                     : const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
             decoration: BoxDecoration(
-              color:
-                  widget.buttonVarient == ButtonVarient.filled && widget.enabled
+              color: widget.color == null
+                  ? widget.buttonVarient == ButtonVarient.filled &&
+                          widget.enabled
                       ? AppColors.buttonColor
                       : widget.buttonVarient == ButtonVarient.filled &&
                               !widget.enabled
                           ? AppColors.buttonColorDisabled
-                          : Colors.transparent,
+                          : Colors.transparent
+                  : widget.color,
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
                   color: widget.enabled
-                      ? AppColors.buttonColor
+                      ? widget.color ?? AppColors.buttonColor
                       : AppColors.buttonColorDisabled,
                   width: 1),
             ),
@@ -98,24 +101,21 @@ class _CustomButtonsState extends State<CustomButtons> {
                                 widget.buttonVarient ==
                                             ButtonVarient.outlined &&
                                         widget.enabled
-                                    ? AppColors.buttonColor
+                                    ? widget.color ?? AppColors.buttonColor
                                     : widget.buttonVarient ==
                                                 ButtonVarient.outlined &&
                                             !widget.enabled
                                         ? AppColors.buttonColorDisabled
-                                        : Colors.white,
-                              )
-                            : CustomFontStyle.paraMSemi(
-                                widget.buttonVarient ==
+                                        : Colors.white)
+                            : CustomFontStyle.paraMSemi(widget.buttonVarient ==
+                                        ButtonVarient.outlined &&
+                                    widget.enabled
+                                ? widget.color ?? AppColors.buttonColor
+                                : widget.buttonVarient ==
                                             ButtonVarient.outlined &&
-                                        widget.enabled
-                                    ? AppColors.buttonColor
-                                    : widget.buttonVarient ==
-                                                ButtonVarient.outlined &&
-                                            !widget.enabled
-                                        ? AppColors.buttonColorDisabled
-                                        : Colors.white,
-                              ),
+                                        !widget.enabled
+                                    ? AppColors.buttonColorDisabled
+                                    : Colors.white),
                       ),
                       widget.suffixIcon != null
                           ? Row(
@@ -126,7 +126,7 @@ class _CustomButtonsState extends State<CustomButtons> {
                                   color: widget.buttonVarient ==
                                               ButtonVarient.outlined &&
                                           widget.enabled
-                                      ? AppColors.buttonColor
+                                      ? widget.color ?? AppColors.buttonColor
                                       : widget.buttonVarient ==
                                                   ButtonVarient.outlined &&
                                               !widget.enabled

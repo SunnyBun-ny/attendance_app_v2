@@ -12,10 +12,11 @@ class AppColors {
   static get neutralGrey100 => const Color(0xffF2F4F7);
   static get neutralGrey50 => const Color(0xffF9FAFB);
 
-  static get alertRed => const Color(0xffF20D0D);
+  // static get alertRed => const Color(0xffF20D0D);
+  static get alertRed => const Color(0xffFF5252);
 
   static get buttonColor => const Color(0xff1A75FF);
-  static get buttonColorDisabled => const Color(0xffCCE0FF);
+  static get buttonColorDisabled => Color.fromARGB(255, 185, 185, 185);
   static get blue200 => const Color(0xff99C2FF);
   static get blue300 => const Color(0xff7FB2FF);
 

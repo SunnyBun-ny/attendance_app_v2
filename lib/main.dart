@@ -1,6 +1,9 @@
 import 'package:attendance_app_v2/helpers/shared_prefs.dart';
 import 'package:attendance_app_v2/modules/screenClassrooms.dart';
+import 'package:attendance_app_v2/modules/screenCreateClassroom.dart';
 import 'package:attendance_app_v2/modules/screenHome.dart';
+import 'package:attendance_app_v2/modules/screenTakeAttendance.dart';
+import 'package:attendance_app_v2/modules/screenViewAttendance.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:attendance_app_v2/helpers/colors.dart';
@@ -57,6 +60,8 @@ class _AttendanceAppV2State extends State<AttendanceAppV2> {
         ScreenRegister.route: (context) => ScreenRegister(),
         ScreenHome.route: (context) => ScreenHome(),
         ScreenClassrooms.route: (context) => ScreenClassrooms(),
+        ScreenCreateClassroom.route: (context) => ScreenCreateClassroom(),
+        ScreenViewAttendance.route: (context) => ScreenViewAttendance(),
       },
     );
   }

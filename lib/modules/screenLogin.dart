@@ -1,6 +1,7 @@
 import 'package:attendance_app_v2/helpers/colors.dart';
 import 'package:attendance_app_v2/helpers/fonts.dart';
 import 'package:attendance_app_v2/helpers/screenDetails.dart';
+import 'package:attendance_app_v2/helpers/shared_prefs.dart';
 import 'package:attendance_app_v2/modules/screenHome.dart';
 import 'package:attendance_app_v2/modules/screenRegister.dart';
 
@@ -9,6 +10,7 @@ import 'package:attendance_app_v2/widgets/customTextFields.dart';
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ScreenLogin extends StatefulWidget {
   static String route = '/screen-login';
@@ -141,6 +143,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
   }
 
   void _onTapLogin() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       _enableEmailField = false;
       _enablePasswordField = false;
@@ -149,10 +152,15 @@ class _ScreenLoginState extends State<ScreenLogin> {
       _errorPass = null;
     });
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
+      await FirebaseAuth.instance
+          .signInWithEmailAndPassword(
         email: _controllerEmail.text.trim(),
         password: _controllerPassword.text.trim(),
-      );
+      )
+          .then((value) {
+        prefs.setString(SharedPrefs.uid, value.user!.uid);
+      });
+
       Navigator.of(context).pushReplacementNamed(ScreenHome.route);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
@@ -179,8 +187,4 @@ class _ScreenLoginState extends State<ScreenLogin> {
       });
     }
   }
-
-  bool _emailValid(String email) => RegExp(
-          r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-      .hasMatch(email);
 }

@@ -1,9 +1,6 @@
-import 'package:attendance_app_v2/helpers/fonts.dart';
 import 'package:attendance_app_v2/helpers/screenDetails.dart';
-import 'package:attendance_app_v2/helpers/shared_prefs.dart';
 import 'package:attendance_app_v2/modules/screenCreateClassroom.dart';
-import 'package:attendance_app_v2/modules/screenTakeAttendance.dart';
-import 'package:attendance_app_v2/widgets/customButtons.dart';
+import 'package:attendance_app_v2/modules/screenViewStudentAtt.dart';
 import 'package:attendance_app_v2/widgets/customClassroomCard.dart';
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -11,16 +8,19 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../helpers/colors.dart';
+import '../helpers/fonts.dart';
+import '../helpers/shared_prefs.dart';
+import '../widgets/customButtons.dart';
 
-class ScreenClassrooms extends StatefulWidget {
-  static String route = '/screen-classroom';
-  const ScreenClassrooms({super.key});
+class ScreenViewAttendance extends StatefulWidget {
+  static String route = '/view-attendance';
+  const ScreenViewAttendance({super.key});
 
   @override
-  State<ScreenClassrooms> createState() => _ScreenClassroomsState();
+  State<ScreenViewAttendance> createState() => _ScreenViewAttendanceState();
 }
 
-class _ScreenClassroomsState extends State<ScreenClassrooms> {
+class _ScreenViewAttendanceState extends State<ScreenViewAttendance> {
   late FirebaseFirestore firestore;
   late SharedPreferences prefs;
   @override
@@ -38,18 +38,6 @@ class _ScreenClassroomsState extends State<ScreenClassrooms> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.of(context).pushNamed(ScreenCreateClassroom.route);
-          },
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          child: const Icon(
-            BootstrapIcons.plus,
-            size: 30,
-          ),
-        ),
         appBar: AppBar(
           toolbarHeight: 62,
           backgroundColor: Colors.transparent,
@@ -59,7 +47,7 @@ class _ScreenClassroomsState extends State<ScreenClassrooms> {
             ),
           ),
           title: Text(
-            'Classrooms',
+            'View Attendance',
             style: CustomFontStyle.subtitleBold(Colors.white),
           ),
         ),
@@ -71,6 +59,7 @@ class _ScreenClassroomsState extends State<ScreenClassrooms> {
                 .snapshots(),
             builder:
                 (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              print(snapshot.data);
               if (snapshot.hasError) {
                 return Center(
                   child: Padding(
@@ -114,26 +103,53 @@ class _ScreenClassroomsState extends State<ScreenClassrooms> {
                       )
                     : SingleChildScrollView(
                         child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                            children: snapshot.data!.docs.map((e) {
-                          return CustomClassroomCard(
-                              classroomName:
-                                  (e.data() as Map<String, dynamic>)['name']
-                                      .toString(),
-                              subjectName:
-                                  (e.data() as Map<String, dynamic>)['subject']
-                                      .toString(),
-                              onTap: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => ScreenTakeAttendance(
-                                      classroomID: e.id,
-                                      classroomData:
-                                          e.data() as Map<String, dynamic>),
-                                ));
-                              });
-                        }).toList()),
-                      ));
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  bottom: 4,
+                                  left: 4,
+                                  right: 4,
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Text('Select Classroom',
+                                        style: CustomFontStyle.captionR(
+                                            AppColors.neutralGrey400)),
+                                    Expanded(
+                                      child: Divider(
+                                        color: AppColors.neutralGrey300,
+                                        thickness: 0.8,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              ...snapshot.data!.docs.map((e) {
+                                return CustomClassroomCard(
+                                    classroomName: (e.data()
+                                            as Map<String, dynamic>)['name']
+                                        .toString(),
+                                    subjectName: (e.data()
+                                            as Map<String, dynamic>)['subject']
+                                        .toString(),
+                                    onTap: () {
+                                      Navigator.of(context)
+                                          .push(MaterialPageRoute(
+                                        builder: (context) =>
+                                            ScreenViewStudentAtt(
+                                                classroomID: e.id,
+                                                classroomData: e.data()
+                                                    as Map<String, dynamic>),
+                                      ));
+                                    });
+                              }).toList(),
+                            ],
+                          ),
+                        ),
+                      );
               }
 
               return const Center(
@@ -143,6 +159,4 @@ class _ScreenClassroomsState extends State<ScreenClassrooms> {
       ),
     );
   }
-
-  void _onTapClassroom() {}
 }
